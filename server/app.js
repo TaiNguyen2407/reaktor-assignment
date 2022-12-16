@@ -4,7 +4,7 @@ const { xml2json } = require('xml-js');
 const app = express();
 const cors = require('cors');
 // const xmlparser = require('express-xml-bodyparser');
-const xml = require('xml');
+const xml2js = require('xml2js');
 
 const port = 3000;
 // app.use(xmlparser());
@@ -22,8 +22,10 @@ app.get('/', async(req,res) => {
     }
     const response = await fetch(url, options);
     const xml = await response.text();
-    // const json = xml2json(xml, {spaces: 1, object: true, trim: true});
-    res.status(201).send(xml);
+    const parser = new xml2js.Parser({});
+    const preResult = await parser.parseStringPromise(xml);
+    const result = JSON.stringify(preResult, null, 2);
+    res.status(201).send(result);
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
