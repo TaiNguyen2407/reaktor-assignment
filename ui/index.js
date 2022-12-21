@@ -2,80 +2,61 @@
 
 
 const url = 'http://localhost:3000';
+
 const test = document.querySelector('.test');
 
+// Declare global constant variable which are nest location and nest radius
 const nestOriginX = 250000;
 const nestOriginY = 250000;
 const nestRadius = 100000;
 
-// const fetchData = setInterval(async() => {
-//     const response = await fetch(url + '/drones');
-//         const xml = await response.text();
-//         const result = JSON.parse(xml);
-//         let count = 0;
-//         let violated = [];
-//         const drones = result.report.capture[0].drone;
-//         drones.forEach(drone => {
-//             const droneSerialNumber = drone.serialNumber;
-//             const droneX = drone.positionX;
-//             const droneY = drone.positionY;
 
-//             const violatedDroneDiv = document.createElement('div');
-//             const violatedDrones = document.createElement('h4');
+// Function to fetch drone data, display whichever drone is in violated zone, and display pilots information
+// Set interval is to let data fetched every 2 seconds
+const fetchData = setInterval(async() => {
+    // Data fetch from XML file and turns into JSON
+    const response = await fetch(url + '/drones');
+    const xml = await response.text();
+    const result = JSON.parse(xml);
+    
+    const drones = result.report.capture[0].drone;
+    drones.forEach(drone => {
+        const droneSerialNumber = drone.serialNumber;
+        const droneX = drone.positionX;
+        const droneY = drone.positionY;
+
+        // Create HTML element with DOM
+        const violatedDroneDiv = document.createElement('div');
+        const violatedDrones = document.createElement('h4');
             
+        // Function to calculate distance of every drone appears on the list to the nest
+        const droneDistance = Math.sqrt((Math.pow((nestOriginX - droneX),2)) + (Math.pow((nestOriginY - droneY),2)));
 
-//             const droneDistance = Math.sqrt((Math.pow((nestOriginX - droneX),2)) + (Math.pow((nestOriginY - droneY),2)));
+        // If distance is smaller or equal to nest radius, which is 100 meters
+        // Display violated drone serial numbers, distance and pilot information on HTML page
+        if (droneDistance <= nestRadius){
+            violatedDrones.innerHTML = 'Drone number: ' + droneSerialNumber + ' and Distance to nest: ' + roundNumber(droneDistance, 2);
+            fetchPilotInfo(droneSerialNumber);
+        }
 
+        violatedDroneDiv.appendChild(violatedDrones);
+        test.appendChild(violatedDroneDiv);
 
-//             if (droneDistance <= nestRadius){
-//                 violatedDrones.innerHTML = 'Drone number: ' + droneSerialNumber + ' and Distance to nest: ' + roundNumber(droneDistance, 2);
-//                 fetchPilotInfo(droneSerialNumber);
-//                 count++;
-//             }
-
-//             violatedDroneDiv.appendChild(violatedDrones);
-//             test.appendChild(violatedDroneDiv);
-//         });   
-// }, 2000);
-
-// const fetchData = async() => {
-//         const response = await fetch(url + '/drones');
-//         const xml = await response.text();
-//         const result = JSON.parse(xml);
-//         let count = 0;
-//         let violated = [];
-//         const drones = result.report.capture[0].drone;
-//         drones.forEach(drone => {
-//             const droneSerialNumber = drone.serialNumber;
-//             const droneX = drone.positionX;
-//             const droneY = drone.positionY;
-
-//             const violatedDroneDiv = document.createElement('div');
-//             const violatedDrones = document.createElement('p');
-            
-
-//             const droneDistance = Math.sqrt((Math.pow((nestOriginX - droneX),2)) + (Math.pow((nestOriginY - droneY),2)));
+        // Violated drones serial number and distance will disappear after 10 mins = 600 seconds
+        setTimeout(() => {
+            test.removeChild(violatedDroneDiv);
+        },600000);
+    });   
+}, 2000);
 
 
-//             if (droneDistance <= nestRadius){
-//                 violatedDrones.innerHTML = 'Drone number:' + droneSerialNumber + ' \n and Distance to nest: ' + roundNumber(droneDistance, 2);
-//                 fetchPilotInfo(droneSerialNumber);
-//                 count++;
-//             }
-
-//             violatedDroneDiv.appendChild(violatedDrones);
-//             test.appendChild(violatedDroneDiv);
-//         });   
-        
-// }
-
-// fetchData;
-
+// Function to fetch pilot data according to drone serial number
 const fetchPilotInfo = async(serialNumber) => {
+    // Fetch data as JSON file
     const response = await fetch(url + '/pilots/' + serialNumber);
     const pilot = await response.json();
 
-    //Create HTML with DOM element
+    // Create HTML with DOM element
     const pilotInfo = document.createElement('div');
     const pilotName = document.createElement('p');
     const pilotEmail = document.createElement('p');
@@ -83,7 +64,7 @@ const fetchPilotInfo = async(serialNumber) => {
     const pilotSerial = document.createElement('h4');
 
 
-    //Assign values to HTML elements
+    // Assign values to HTML elements
     pilotSerial.innerHTML = 'Serial Number: ' + serialNumber;
     pilotName.innerHTML = 'pilot name: ' + pilot.firstName + ' ' + pilot.lastName;
     pilotEmail.innerHTML = 'pilot email: ' + pilot.email;
@@ -91,12 +72,17 @@ const fetchPilotInfo = async(serialNumber) => {
 
     
 
-    //Append elements to parent div
+    // Append elements to parent div
     pilotInfo.appendChild(pilotSerial);
     pilotInfo.appendChild(pilotName);
     pilotInfo.appendChild(pilotEmail);
     pilotInfo.appendChild(pilotPhoneNumber);
     test.append(pilotInfo);
+
+    // Pilot information will disappear after 10 mins = 600 seconds
+    setTimeout(() => {
+        test.removeChild(pilotInfo);
+    },600000);
 }
 
 
@@ -106,5 +92,4 @@ const fetchPilotInfo = async(serialNumber) => {
 const roundNumber = (value, decimals) => {
     return Number(Math.round(value/1000 + 'e' + decimals) + 'e-' + decimals) + 'm';
 }
-
 
