@@ -3,7 +3,7 @@
 
 const url = 'http://localhost:3000';
 
-const test = document.querySelector('.test');
+const main = document.querySelector('.main');
 
 // Declare global constant variable which are nest location and nest radius
 const nestOriginX = 250000;
@@ -41,7 +41,7 @@ const fetchData = setInterval(async() => {
 
         // Append HTML element to its parents
         violatedDroneDiv.appendChild(violatedDrones);
-        test.appendChild(violatedDroneDiv);
+        main.appendChild(violatedDroneDiv);
 
         localStorage.setItem('drones', violatedDrones.innerHTML);
 
@@ -81,7 +81,7 @@ const fetchPilotInfo = async(serialNumber) => {
     pilotInfo.appendChild(pilotName);
     pilotInfo.appendChild(pilotEmail);
     pilotInfo.appendChild(pilotPhoneNumber);
-    test.append(pilotInfo);
+    main.append(pilotInfo);
 
     localStorage.setItem('pilots', pilotInfo);
 
