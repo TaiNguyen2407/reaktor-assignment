@@ -43,12 +43,12 @@ const fetchData = setInterval(async() => {
         violatedDroneDiv.appendChild(violatedDrones);
         test.appendChild(violatedDroneDiv);
 
-        sessionStorage.setItem('drones', violatedDrones.innerHTML);
+        localStorage.setItem('drones', violatedDrones.innerHTML);
 
         // Violated drones serial number and distance will disappear after 10 mins = 600 seconds
         setTimeout(() => {
-            sessionStorage.removeItem('drones');
-            violatedDroneDiv.innerHTML = sessionStorage.getItem('drones');
+            localStorage.removeItem('drones');
+            violatedDroneDiv.innerHTML = localStorage.getItem('drones');
         },600000);
     });   
 }, 2000);
@@ -83,12 +83,12 @@ const fetchPilotInfo = async(serialNumber) => {
     pilotInfo.appendChild(pilotPhoneNumber);
     test.append(pilotInfo);
 
-    sessionStorage.setItem('pilots', pilotInfo);
+    localStorage.setItem('pilots', pilotInfo);
 
     // Pilot information will disappear after 10 mins = 600 seconds
     setTimeout(() => {
-        sessionStorage.removeItem('pilots');
-        pilotInfo.innerHTML = sessionStorage.getItem('pilots');
+        localStorage.removeItem('pilots');
+        pilotInfo.innerHTML = localStorage.getItem('pilots');
     },600000);
 }
 
@@ -101,11 +101,3 @@ const roundNumber = (value, decimals) => {
 }
 
 
-// sessionStorage.setItem('test', 'Hello World');
-
-// test.innerHTML = sessionStorage.getItem('test');
-
-// setTimeout(() => {
-//     sessionStorage.removeItem('test');
-//     test.innerHTML = sessionStorage.getItem('test');
-// }, 5000)
