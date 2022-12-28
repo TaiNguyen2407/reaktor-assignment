@@ -36,18 +36,21 @@ const fetchData = setInterval(async() => {
         // If distance is smaller or equal to nest radius, which is 100 meters
         // Display violated drone serial numbers, distance and pilot information on HTML page
         if (droneDistance <= nestRadius){
-            
+            // Adding violated drones serial number to drone array
             droneArr.push(droneSerialNumber.toString());
             droneArr.forEach(item => {
+                // Pick from drone array only distinct value of drone serial number 
                 if(distinctDroneArr.indexOf(item) < 0){
+                    // If yes, push the distinct drone serial number to the new array - distinctDroneArr
                     distinctDroneArr.push(item);
+                    // Then set DOM element content with new values from distinctDroneArr
+                    // As a result, index.html will only show drone serial number and its pilot information once
                     violatedDrones.innerHTML = 'Drone number: ' + item + ' and Distance to nest: ' + roundNumber(droneDistance, 2);
+                    // Fetch pilot info with drone serial number from distinctDroneArr
                     fetchPilotInfo(item);
                 }
             })
         }
-
-
 
         // Append HTML element to its parents
         violatedDroneDiv.appendChild(violatedDrones);
