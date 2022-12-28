@@ -9,7 +9,8 @@ const main = document.querySelector('.main');
 const nestOriginX = 250000;
 const nestOriginY = 250000;
 const nestRadius = 100000;
-
+let droneArr = [];
+let distinctDroneArr = [];
 
 // Function to fetch drone data, display whichever drone is in violated zone, and display pilots information
 // Set interval is to let data fetched every 2 seconds
@@ -35,9 +36,18 @@ const fetchData = setInterval(async() => {
         // If distance is smaller or equal to nest radius, which is 100 meters
         // Display violated drone serial numbers, distance and pilot information on HTML page
         if (droneDistance <= nestRadius){
-            violatedDrones.innerHTML = 'Drone number: ' + droneSerialNumber + ' and Distance to nest: ' + roundNumber(droneDistance, 2);
-            fetchPilotInfo(droneSerialNumber);
+            
+            droneArr.push(droneSerialNumber.toString());
+            droneArr.forEach(item => {
+                if(distinctDroneArr.indexOf(item) < 0){
+                    distinctDroneArr.push(item);
+                    violatedDrones.innerHTML = 'Drone number: ' + item + ' and Distance to nest: ' + roundNumber(droneDistance, 2);
+                    fetchPilotInfo(item);
+                }
+            })
         }
+
+
 
         // Append HTML element to its parents
         violatedDroneDiv.appendChild(violatedDrones);
@@ -52,6 +62,7 @@ const fetchData = setInterval(async() => {
         },600000);
     });   
 }, 2000);
+
 
 
 // Function to fetch pilot data according to drone serial number
@@ -99,5 +110,4 @@ const fetchPilotInfo = async(serialNumber) => {
 const roundNumber = (value, decimals) => {
     return Number(Math.round(value/1000 + 'e' + decimals) + 'e-' + decimals) + 'm';
 }
-
 
